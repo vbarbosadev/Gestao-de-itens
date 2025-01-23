@@ -2,7 +2,11 @@ package br.ufrn.imd.dao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import br.ufrn.imd.modelo.Item;
 import br.ufrn.imd.modelo.Sala;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 
 public class SalaDAO {
@@ -35,6 +39,31 @@ public class SalaDAO {
         } catch (SQLException e) {
             System.err.println("Erro ao inserir sala: " + e.getMessage());
         }
+    }
+
+    public List<Sala> buscarTodas() {
+        List<Sala> salas = new ArrayList<>();
+        String sql = """
+        SELECT nome, setorId, responsavel, tipo, id
+        FROM sala
+    """;
+
+        try (PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Sala novaSala = new Sala(
+                        rs.getString("nome"),
+                        rs.getInt("setorId"),
+                        rs.getString("responsavel"),
+                        rs.getString("tipo")
+                );
+                novaSala.setId(rs.getInt("id"));
+                salas.add(novaSala);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return salas;
     }
 
     public void listarSalas() {

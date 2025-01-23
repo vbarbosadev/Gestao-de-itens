@@ -5,26 +5,25 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
-import java.util.Objects;
+import br.ufrn.imd.controle.MainMenuController;
 
 public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("MainMenu.fxml"));
-            Scene scene = new Scene(root, 600, 400);
-            primaryStage.setTitle("Gerenciamento de Setores da Universidade");
-            primaryStage.setScene(scene);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/br/ufrn/imd/visao/MainMenu.fxml"));
+            Parent root = loader.load();
+
+            // Obtém o controlador e passa o Stage principal
+            MainMenuController controller = loader.getController();
+            controller.setPrimaryStage(primaryStage);
+
+            primaryStage.setTitle("Menu Principal");
+            primaryStage.setScene(new Scene(root, 800, 600));
             primaryStage.show();
-
-
-
-
         } catch (Exception e) {
-            // Tratamento de exceções
-            System.err.println("Erro ao iniciar a aplicação: " + e.getMessage());
+            System.err.println("Erro ao inicializar o aplicativo:");
             e.printStackTrace();
         }
     }
@@ -33,5 +32,3 @@ public class MainApp extends Application {
         launch(args);
     }
 }
-
-

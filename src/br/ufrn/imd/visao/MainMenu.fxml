@@ -2,11 +2,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="br.ufrn.imd.controle.MainMenuController">
+<BorderPane prefHeight="600.0" prefWidth="640.0" xmlns:fx="http://javafx.com/fxml" fx:controller="br.ufrn.imd.controle.MainMenuController">
 
   <top>
-    <Label text="Menu Principal" style="-fx-font-size: 18; -fx-font-weight: bold;" alignment="CENTER"/>
+    <VBox alignment="CENTER" spacing="10">
+      <Label text="Menu Principal" style="-fx-font-size: 18; -fx-font-weight: bold;" alignment="CENTER"/>
+    </VBox>
   </top>
+
   <center>
     <VBox alignment="CENTER" spacing="20">
       <Button text="Adicionar/Excluir" onAction="#abrirAdicionarExcluir" prefWidth="200"/>

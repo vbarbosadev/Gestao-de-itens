@@ -6,16 +6,20 @@ import br.ufrn.imd.dao.SetorDAO;
 import br.ufrn.imd.dao.SalaDAO;
 import br.ufrn.imd.dao.ItemDAO;
 
+import java.io.IOException;
 import java.util.List;
 
 import br.ufrn.imd.modelo.Item;
-import br.ufrn.imd.visao.ItemView;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 public class MovimentacaoController {
 
@@ -23,6 +27,8 @@ public class MovimentacaoController {
     private SalaDAO salaDAO = new SalaDAO();
     private ItemDAO itemDAO = new ItemDAO();
     private PessoaDAO PessoaDAO = new PessoaDAO();
+
+    private Stage primaryStage; // Referência ao Stage principal
 
 
     @FXML
@@ -45,24 +51,24 @@ public class MovimentacaoController {
 
 
     @FXML
-    private TableView<ItemView> tableResultados;
+    private TableView<Item> tableResultados;
 
     @FXML
-    private TableColumn<ItemView, String> colunaId;
+    private TableColumn<Item, String> colunaId;
     @FXML
-    private TableColumn<ItemView, String> colunaNome;
+    private TableColumn<Item, String> colunaNome;
     @FXML
-    private TableColumn<ItemView, String> colunaDescricao;
+    private TableColumn<Item, String> colunaDescricao;
     @FXML
-    private TableColumn<ItemView, String> colunaSetor;
+    private TableColumn<Item, String> colunaSetor;
     @FXML
-    private TableColumn<ItemView, String> colunaSala;
+    private TableColumn<Item, String> colunaSala;
 
 
 
     @FXML
     public void initialize() {
-        colunaId.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getId()));
+        colunaId.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(cellData.getValue().getId())));
         colunaNome.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getNome()));
         colunaDescricao.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDescricao()));
         colunaSetor.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTipo()));
@@ -76,12 +82,43 @@ public class MovimentacaoController {
         comboTipoItem.setItems(FXCollections.observableArrayList("Eletrônico", "Mobiliário", "Outro"));
     }
 
+    // Método para definir o Stage principal
+    public void setPrimaryStage(Stage stage) {
+        this.primaryStage = stage;
+    }
+
+
+    @FXML
+    private void voltarAoMenuPrincipal(ActionEvent event) {
+        try {
+
+
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/br/ufrn/imd/visao/MainMenu.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) textNomeItem.getScene().getWindow();
+            stage.setTitle("Menu Principal");
+            stage.setScene(new Scene(root));
+
+            MainMenuController controller = loader.getController();
+            controller.setPrimaryStage(stage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarAlerta("Erro", "Não foi possível voltar ao menu principal.");
+        }
+
+
+    }
+
+
     @FXML
     private void buscarPorSetor(ActionEvent event) {
         String setor = comboSetor.getValue();
         if (setor != null) {
 
-            ObservableList<ItemView> itens = itemDAO.buscarPorSetor(setor);
+            ObservableList<Item> itens = itemDAO.buscarPorSetor(setor);
             atualizarTabela(itens);
         }
     }
@@ -90,7 +127,7 @@ public class MovimentacaoController {
     private void buscarPorSala(ActionEvent event) {
         String sala = comboSala.getValue();
         if (sala != null) {
-            ObservableList<ItemView> itens = itemDAO.buscarPorSala(sala);
+            ObservableList<Item> itens = itemDAO.buscarPorSala(sala);
             atualizarTabela(itens);
         }
     }
@@ -99,23 +136,25 @@ public class MovimentacaoController {
     private void buscarPorTipoItem(ActionEvent event) {
         String tipoItem = comboTipoItem.getValue();
         if (tipoItem != null) {
-            ObservableList<ItemView> itens = itemDAO.buscarPorTipo(tipoItem);
+            ObservableList<Item> itens = itemDAO.buscarPorTipo(tipoItem);
             atualizarTabela(itens);
         }
     }
 
     @FXML
-    private void excluirItemSelecionado(ActionEvent event) {
-        ItemView itemSelecionado = tableResultados.getSelectionModel().getSelectedItem();
+    private void movimentarItemk(ActionEvent event) {
+        Item itemSelecionado = tableResultados.getSelectionModel().getSelectedItem();
         if (itemSelecionado == null) {
             mostrarAlerta("Erro", "Nenhum item selecionado para exclusão.");
             return;
         }
 
-        itemDAO.removerItem(itemSelecionado.getIdStr());
+        itemDAO.moverItem(itemSelecionado.getIdStr(), itemSelecionado.getSalaIdStr());
         atualizarTabela(itemDAO.buscarTodosItens());
         mostrarAlerta("Sucesso", "Item excluído com sucesso.");
     }
+
+
 
     private void mostrarAlerta(String titulo, String mensagem) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -128,12 +167,12 @@ public class MovimentacaoController {
     private void buscarItemUnico(ActionEvent event) {
         String nomeItem = textNomeItem.getText();
         if (nomeItem != null && !nomeItem.isBlank()) {
-            ObservableList<ItemView> itens = itemDAO.buscarPorNome(nomeItem);
+            ObservableList<Item> itens = itemDAO.buscarPorNome(nomeItem);
             atualizarTabela(itens);
         }
     }
 
-    private void atualizarTabela(ObservableList<ItemView> data) {
+    private void atualizarTabela(ObservableList<Item> data) {
         tableResultados.setItems(data);
     }
 

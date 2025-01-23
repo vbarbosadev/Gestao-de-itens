@@ -4,25 +4,22 @@ import br.ufrn.imd.dao.ItemDAO;
 import br.ufrn.imd.dao.SalaDAO;
 import br.ufrn.imd.dao.SetorDAO;
 import br.ufrn.imd.modelo.Item;
-import br.ufrn.imd.visao.ItemView;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class ItemController {
 
     private SetorDAO setorDAO = new SetorDAO();
     private SalaDAO salaDAO = new SalaDAO();
     private ItemDAO itemDAO = new ItemDAO();
-
 
     @FXML
     private ComboBox<String> comboTipoItem;
@@ -39,16 +36,12 @@ public class ItemController {
     @FXML
     private ComboBox<String> comboSalaNovoItem;
 
-
-
     @FXML
     public void initialize() {
-
         comboTipoItem.setItems(FXCollections.observableArrayList("Eletrônico", "Mobiliário", "Outro"));
         comboSetorNovoItem.setItems(FXCollections.observableArrayList(setorDAO.buscarTodosNomes()));
         comboSalaNovoItem.setItems(FXCollections.observableArrayList(salaDAO.buscarTodosNomes()));
     }
-
 
     @FXML
     private void adicionarItem(ActionEvent event) {
@@ -63,13 +56,11 @@ public class ItemController {
             return;
         }
 
-        Item novoItem = new Item(nome, descricao, sala, tipo);
+        Item novoItem = new Item("0", nome, descricao, "0", tipo, sala);
         itemDAO.inserirItem(novoItem);
         limparCamposAdicionar();
         mostrarAlerta("Sucesso", "Item adicionado com sucesso.");
     }
-
-
 
     private void limparCamposAdicionar() {
         textNomeNovoItem.clear();
@@ -79,16 +70,27 @@ public class ItemController {
     }
 
     @FXML
-    private void buscarPorTipoItem(ActionEvent event) {
-        String tipoItem = comboTipoItem.getValue();
-        if (tipoItem != null) {
-            ObservableList<ItemView> itens = itemDAO.buscarPorTipo(tipoItem);
+    private void voltarAoMenuPrincipal(ActionEvent event) {
+        try {
 
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/br/ufrn/imd/visao/MainMenu.fxml"));
+            Parent root = loader.load();
+
+            Stage stage = (Stage) textNomeNovoItem.getScene().getWindow();
+            stage.setTitle("Menu Principal");
+            stage.setScene(new Scene(root));
+
+            MainMenuController controller = loader.getController();
+            controller.setPrimaryStage(stage);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarAlerta("Erro", "Não foi possível voltar ao menu principal.");
         }
     }
 
     private void mostrarAlerta(String titulo, String mensagem) {
-        Alert alert = new Alert(AlertType.INFORMATION);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
         alert.setContentText(mensagem);
         alert.showAndWait();

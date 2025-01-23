@@ -9,7 +9,7 @@ import java.sql.SQLException;
  */
 public class DatabaseConnection {
     private static Connection conexao;
-    private static final String URL = "jdbc:sqlite:C:\\Users\\vinicius\\Documents\\GitHub\\Inventario\\src\\database\\database.db";
+    private static String URL = "jdbc:sqlite:C:\\Users\\Suporte\\Documents\\GitHub\\vinicius\\lp2\\trabFinal\\src\\database\\database.db";
 
     private DatabaseConnection() {
         // Construtor privado para evitar instâncias externas
@@ -51,4 +51,14 @@ public class DatabaseConnection {
         itemDAO.criarTabela();
         pessoaDAO.criarTabela();
     }
+
+    public static String getURL() {
+        return URL;
+    }
+
+    public static void setURL(String URL) {
+        DatabaseConnection.URL = URL;
+    }
+
+
 }

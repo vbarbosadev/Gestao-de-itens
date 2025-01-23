@@ -36,7 +36,7 @@ public class Main {
         // Criação de itens com nomes variados e distribuição entre as salas
         String[] nomesItens = {"Projetor", "Computador", "Notebook", "Mesa", "Cadeira", "Lousa", "Ar Condicionado", "Armário", "Roteador", "Impressora"};
         for (int i = 1; i <= 60; i++) {
-            int j = i;
+            int j = i-1;
             while(j > 9){
                 j = j - 9;
             }
@@ -45,7 +45,7 @@ public class Main {
             String descricaoItem = "Descrição do " + nomeItem;
             String tipoItem = (i % 2 == 0) ? "Eletrônico" : "Mobiliário";
 
-            Item item = new Item(nomeItem, descricaoItem, salaDestino, tipoItem);
+            Item item = new Item("0", nomeItem, descricaoItem, String.valueOf(i), tipoItem, salaDestino);
             itemDAO.inserirItem(item);
         }
         itemDAO.listarItens();
