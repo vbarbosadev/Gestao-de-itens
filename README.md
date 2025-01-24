@@ -73,3 +73,11 @@ O sistema utiliza um banco de dados SQLite para armazenar os dados dos itens e s
 - **Erro com JavaFX**: Confirme que o JavaFX SDK está configurado corretamente na sua IDE ou linha de comando.
 
 
+
+## Drive com video e relatatório
+
+- **LINK**: https://drive.google.com/drive/folders/1uPrT3nDxzpYFoEup-DkBSHKOU2Kli-23?usp=sharing
+- **Participantes**: Vinicius Barbosa Ventura Mergulhão
+
+
+
